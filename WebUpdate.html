@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Matriks 2x2 (Lengkap)</title>
+    <style>
+        /* Gaya untuk Tampilan */
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .matrix-input { display: flex; gap: 40px; margin-bottom: 20px; }
+        .matrix { border: 1px solid #333; padding: 15px; border-radius: 5px; background-color: #f9f9f9; }
+        .matrix h3 { margin-top: 0; color: #007bff; }
+        input[type="number"] { width: 50px; padding: 5px; margin: 3px; text-align: center; border: 1px solid #ccc; }
+        
+        /* Gaya Tombol */
+        button { padding: 10px 15px; margin-right: 10px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 3px; transition: background-color 0.3s; }
+        button:hover { background-color: #0056b3; }
+        
+        #result { margin-top: 30px; border-top: 2px solid #007bff; padding-top: 20px; }
+        .result-table { border-collapse: collapse; text-align: center; margin-top: 10px; }
+        .result-table td { border: 1px solid black; padding: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>Kalkulator Matriks 2x2</h1>
+    <h2>Operasi Penjumlahan, Pengurangan, dan Perkalian</h2>
+
+    <div class="matrix-input">
+        <div class="matrix">
+            <h3>Matriks A</h3>
+            <input type="number" id="a11" value="1"> <input type="number" id="a12" value="2"><br>
+            <input type="number" id="a21" value="3"> <input type="number" id="a22" value="4">
+        </div>
+
+        <div class="matrix">
+            <h3>Matriks B</h3>
+            <input type="number" id="b11" value="5"> <input type="number" id="b12" value="6"><br>
+            <input type="number" id="b21" value="7"> <input type="number" id="b22" value="8">
+        </div>
+    </div>
+
+    <div>
+        <button onclick="calculate('add')">A + B (Tambah)</button>
+        <button onclick="calculate('subtract')">A - B (Kurang)</button>
+        <button onclick="calculate('multiply')">A x B (Kali)</button>
+    </div>
+
+    <div id="result">
+        <h2>Hasil</h2>
+        <p>Masukkan nilai dan klik tombol operasi di atas.</p>
+    </div>
+
+    <script>
+        // Fungsi untuk mengambil nilai input dari matriks
+        function getMatrixValues() {
+            // Mengambil nilai dari input, jika kosong dianggap 0
+            const A = [
+                [parseFloat(document.getElementById('a11').value) || 0, parseFloat(document.getElementById('a12').value) || 0],
+                [parseFloat(document.getElementById('a21').value) || 0, parseFloat(document.getElementById('a22').value) || 0]
+            ];
+            const B = [
+                [parseFloat(document.getElementById('b11').value) || 0, parseFloat(document.getElementById('b12').value) || 0],
+                [parseFloat(document.getElementById('b21').value) || 0, parseFloat(document.getElementById('b22').value) || 0]
+            ];
+            return { A, B };
+        }
+
+        // Fungsi untuk menampilkan hasil
+        function displayResult(operationName, resultMatrix) {
+            const resultDiv = document.getElementById('result');
+            let html = `<h2>Hasil ${operationName}</h2>`;
+            
+            html += `<table class="result-table">`;
+            
+            // Baris 1
+            html += `<tr>`;
+            html += `<td>${resultMatrix[0][0]}</td>`;
+            html += `<td>${resultMatrix[0][1]}</td>`;
+            html += `</tr>`;
+
+            // Baris 2
+            html += `<tr>`;
+            html += `<td>${resultMatrix[1][0]}</td>`;
+            html += `<td>${resultMatrix[1][1]}</td>`;
+            html += `</tr>`;
+
+            html += `</table>`;
+            resultDiv.innerHTML = html;
+        }
+
+        // Fungsi utama untuk perhitungan
+        function calculate(operation) {
+            const { A, B } = getMatrixValues();
+            let R = [[0, 0], [0, 0]]; // Matriks Hasil 2x2
+
+            switch (operation) {
+                case 'add':
+                case 'subtract':
+                    // Penjumlahan dan Pengurangan (element-wise)
+                    for (let i = 0; i < 2; i++) { 
+                        for (let j = 0; j < 2; j++) { 
+                            if (operation === 'add') {
+                                R[i][j] = A[i][j] + B[i][j];
+                            } else { // 'subtract'
+                                R[i][j] = A[i][j] - B[i][j];
+                            }
+                        }
+                    }
+                    displayResult(operation === 'add' ? 'Penjumlahan (A + B)' : 'Pengurangan (A - B)', R);
+                    break;
+                
+                case 'multiply':
+                    // Perkalian Matriks (baris x kolom)
+                    // R[i][j] = A[i][0]*B[0][j] + A[i][1]*B[1][j]
+                    
+                    // R[0][0]
+                    R[0][0] = (A[0][0] * B[0][0]) + (A[0][1] * B[1][0]);
+                    // R[0][1]
+                    R[0][1] = (A[0][0] * B[0][1]) + (A[0][1] * B[1][1]);
+                    // R[1][0]
+                    R[1][0] = (A[1][0] * B[0][0]) + (A[1][1] * B[1][0]);
+                    // R[1][1]
+                    R[1][1] = (A[1][0] * B[0][1]) + (A[1][1] * B[1][1]);
+
+                    displayResult('Perkalian (A x B)', R);
+                    break;
+                
+                default:
+                    document.getElementById('result').innerHTML = '<h2>Hasil</h2><p>Operasi tidak dikenal.</p>';
+            }
+        }
+    </script>
+
+</body>
+</html>
